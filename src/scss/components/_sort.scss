@@ -8,6 +8,10 @@
 
     svg {
       margin-right: 8px;
+      transition: transform .3s ease;
+      &.active {
+        transform: rotate(180deg)
+      }
     }
 
     b {
@@ -31,6 +35,7 @@
     overflow: hidden;
     padding: 10px 0;
     width: 160px;
+    z-index: 100;
 
     ul {
       overflow: hidden;
