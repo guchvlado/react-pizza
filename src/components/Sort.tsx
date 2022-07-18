@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAppDispatch } from '../hooks/redux.hook';
+import { useAppDispatch, useAppSelector } from '../hooks/redux.hook';
 import { setActiveSortBy } from '../redux/filter/filterSlice';
 import { SortItem } from '../types/SortItem';
 import { SortPropertyEnum } from '../types/SortPropertyEnum';
@@ -15,14 +15,16 @@ const sortList: SortItem[] = [
 
 const Sort = () => {
 
-    const [sortBy, setSortBy] = useState(0)
+    // const [sortBy, setSortBy] = useState(0)
     const [isOpen, setIsOpen] = useState(false)
 
     const dispatch = useAppDispatch();
 
+    const sortBy: SortItem = useAppSelector(state => state.filter.activeSortBy)
+
     const onChangeSort = (i: number) => {
         dispatch(setActiveSortBy(sortList[i]))
-        setSortBy(i)
+        // setSortBy(i)
     }
 
     
@@ -43,7 +45,7 @@ const Sort = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => setIsOpen(isOpen => !isOpen)}>{sortList[sortBy].name}</span>
+                <span onClick={() => setIsOpen(isOpen => !isOpen)}>{sortBy.name}</span>
             </div>
             {isOpen && <div className="sort__popup">
                 <ul>
@@ -51,7 +53,7 @@ const Sort = () => {
                     <li 
                     key={index} 
                     onClick={() => onChangeSort(index)}
-                    className={sortBy === index ? 'active' : ''}
+                    className={sortBy.sortProperty === sortList[index].sortProperty ? 'active' : ''}
                     >{sortList[index].name}</li>)}
                 </ul>
             </div>}

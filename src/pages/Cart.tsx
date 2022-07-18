@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CartEmpty from '../components/CartEmpty';
 import CartItem from '../components/CartItem';
+import { useAppDispatch, useAppSelector } from '../hooks/redux.hook';
+import { clearCart } from '../redux/cart/cartSlice';
+import { countOrder } from '../utils/countOrder';
 
 const Cart = () => {
+
+    const {items} = useAppSelector(state => state.cart)
+
+    const dispatch = useAppDispatch()
+
+    const onClearCart = () => {
+      if (window.confirm('Очистить корзину ?')) {
+        dispatch(clearCart())
+      }
+    }
+
+    const {totalQuantity, totalPrice} = countOrder(items)
+
     return (
         <div className="container container--cart">
 
-            <CartEmpty/>
-
-          {/* <div className="cart">
+            {items.length > 0 
+            ? <div className="cart">
             <div className="cart__top">
               <h2 className="content__title">
                 <svg
@@ -38,7 +53,7 @@ const Cart = () => {
                     strokeLinejoin="round"></path>
                 </svg>
                  Корзина</h2>
-              <div className="cart__clear">
+              <div onClick={onClearCart} className="cart__clear">
                 <svg
                 width="20"
                 height="20"
@@ -74,12 +89,12 @@ const Cart = () => {
               </div>
             </div>
             <div className="content__items">
-              <CartItem/>
+              {items.map(item => <CartItem key={item.id} {...item} />)}
             </div>
             <div className="cart__bottom">
               <div className="cart__bottom-details">
-                <span> Всего пицц: <b>3 шт.</b> </span>
-                <span> Сумма заказа: <b>900 ₽</b> </span>
+                <span> Всего пицц: <b>{totalQuantity} шт.</b> </span>
+                <span> Сумма заказа: <b>{totalPrice} ₽</b> </span>
               </div>
               <div className="cart__bottom-buttons">
                 <Link to="/" className="button button--outline button--add go-back-btn">
@@ -103,7 +118,13 @@ const Cart = () => {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
+          :
+          <CartEmpty/>
+          }
+
+
+
 
 
         </div>

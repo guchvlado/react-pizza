@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks/redux.hook';
+import { addCartItem } from '../redux/cart/cartSlice';
 import { IPizza } from '../types/IPizza';
 
 const typeNames = ['тонкое', 'традиционное'];
@@ -9,6 +11,21 @@ const PizzaItem: React.FC<IPizza> = ({ id, title, imageUrl, types, sizes, price 
 
     const [activeType, setActiveType] = useState(types[0]);
     const [activeSize, setActiveSize] = useState(sizes[0]);
+
+    const dispatch = useAppDispatch()
+    const cartItem = useAppSelector(state => state.cart.items.find(item => item.id === `${id}:${activeType}:${activeSize}`))
+
+    const onAddToCart = () => {
+        dispatch(addCartItem({
+            id: `${id}:${activeType}:${activeSize}`,
+            title,
+            imageUrl,
+            price,
+            size: sizes[activeSize],
+            type: typeNames[activeType],
+            quantity: 1
+        }))
+    }
 
     return (
         <div className="pizza-block">
@@ -44,7 +61,7 @@ const PizzaItem: React.FC<IPizza> = ({ id, title, imageUrl, types, sizes, price 
             </div>
             <div className="pizza-block__bottom">
                 <div className="pizza-block__price">от {price} ₽</div>
-                <div className="button button--outline button--add">
+                <div onClick={onAddToCart} className="button button--outline button--add">
                     <svg
                         width="12"
                         height="12"
@@ -58,7 +75,7 @@ const PizzaItem: React.FC<IPizza> = ({ id, title, imageUrl, types, sizes, price 
                         />
                     </svg>
                     <span>Добавить</span>
-                    <i>2</i>
+                    {cartItem && <i>{cartItem.quantity}</i>}
                 </div>
             </div>
         </div>
