@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/redux.hook';
 import { setActiveSortBy } from '../redux/filter/filterSlice';
 import { SortItem } from '../types/SortItem';
@@ -15,8 +15,8 @@ const sortList: SortItem[] = [
 
 const Sort = () => {
 
-    // const [sortBy, setSortBy] = useState(0)
     const [isOpen, setIsOpen] = useState(false)
+    const sortRef = useRef<HTMLDivElement>(null)
 
     const dispatch = useAppDispatch();
 
@@ -24,12 +24,24 @@ const Sort = () => {
 
     const onChangeSort = (i: number) => {
         dispatch(setActiveSortBy(sortList[i]))
-        // setSortBy(i)
+        setIsOpen(false)
     }
 
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            const _e = e as MouseEvent & {path: Node[]}
+            if (sortRef.current && !_e.path.includes(sortRef.current)) {
+                setIsOpen(false)
+            }
+        }
+
+        document.body.addEventListener('click', handleClickOutside)
+
+        return () => document.body.removeEventListener('click', handleClickOutside)
+    }, [])
     
     return (
-        <div className="sort">
+        <div ref={sortRef} className="sort">
             <div className="sort__label">
                 <svg
                     width="10"

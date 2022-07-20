@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch } from '../../hooks/redux.hook';
+import { useDebounce } from '../../hooks/useDebounce';
 import { setActiveSearch } from '../../redux/filter/filterSlice';
 
 import styles from './Search.module.scss'
@@ -7,18 +8,26 @@ import styles from './Search.module.scss'
 const Search = () => {
 
     const [text, setText] = useState('')
+    const [debouncedText, setDebouncedText] = useDebounce(text, 150)
+
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        dispatch(setActiveSearch(debouncedText)) // eslint-disable-next-line
+    }, [debouncedText])
+
     const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newText = e.target.value
-        dispatch(setActiveSearch(newText))
         setText(newText)
     }
 
     const onClear = () => {
         setText('');
+        setDebouncedText('')
         dispatch(setActiveSearch(''))
+        inputRef.current?.focus()
     }
 
     return (
@@ -56,7 +65,7 @@ const Search = () => {
                     y2="20.366"
                 />
             </svg>
-            <input className={styles.input} type="text" placeholder='Поиск пиццы...' value={text} onChange={onChangeSearch} />
+            <input className={styles.input} ref={inputRef} type="text" placeholder='Поиск пиццы...' value={text} onChange={onChangeSearch} />
             {text.length > 0 ? <svg
                 className={styles.clearIcon}
                 onClick={onClear}
