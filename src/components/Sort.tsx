@@ -13,8 +13,8 @@ const sortList: SortItem[] = [
     {name: 'Алфавиту ASC', sortProperty: SortPropertyEnum.TITLE_ASC}
 ]
 
-const Sort = () => {
-
+const Sort = React.memo(() => {
+    
     const [isOpen, setIsOpen] = useState(false)
     const sortRef = useRef<HTMLDivElement>(null)
 
@@ -71,6 +71,6 @@ const Sort = () => {
             </div>}
         </div>
     );
-};
+});
 
 export default Sort;
