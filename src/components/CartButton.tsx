@@ -4,10 +4,19 @@ import { useAppSelector } from '../hooks/redux.hook';
 import { countOrder } from '../utils/countOrder';
 
 const CartButton = () => {
+    
+    const isMounted = React.useRef(false)
 
     const items = useAppSelector(state => state.cart.items)
 
     const {totalQuantity, totalPrice} = countOrder(items)
+
+    React.useEffect(() => {
+        if (isMounted.current) {
+            localStorage.setItem('cart', JSON.stringify(items))
+        }
+        isMounted.current = true
+    }, [items])
 
     return (
         <div className="header__cart">
